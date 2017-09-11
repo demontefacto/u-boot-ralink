@@ -1,0 +1,33 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Recovery Mode</title>
+<script language="javascript">
+var count = 100;	
+function count_down(){
+if (count==0) {get_by_id("success").style.display="";get_by_id("upgrade").style.display="none";return;}
+
+get_by_id("show_sec").innerHTML = count;
+if (count<101) {count--;setTimeout('count_down()', 1000);}
+}
+function get_by_id(id){with(document){return getElementById(id);}}
+</script>
+</head>
+
+<body>
+
+<H1><p align='center'><font color='blue'>Firmware Recovery Mode</font></p></H1>
+<HR size=1>
+<p align='center'>
+<span id=upgrade><font size='3'>Upgrading system, Please wait a moment...<span id="show_sec"></span>&nbsp;(sec)</font></span>
+<span id=success style="display:none"><font color='blue' size='4'><b>Upgrade Done!</b></font></span>
+<br>
+<span id=upgrade><font size='2'>System will auto reboot after upgrade completed.</font></span>
+</p>
+<HR size=1>
+<strong>Warning! Please do not power off.</strong>
+<script>
+count_down();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+# 1 "/work/luo/u-boot-ralink/board/rt2880//"
+rt2880_init.o: rt2880_init.S /work/luo/u-boot-ralink/include/config.h \
+  /work/luo/u-boot-ralink/include/configs/rt2880.h \
+  /work/luo/u-boot-ralink/include/configs/../../autoconf.h \
+  /work/luo/u-boot-ralink/include/cmd_confdefs.h \
+  /work/luo/u-boot-ralink/include/version.h \
+  /work/luo/u-boot-ralink/include/../uboot_version.h \
+  /work/luo/u-boot-ralink/include/asm/regdef.h include/sysc.h \
+  include/product.h include/mem_map.h \
+  /work/luo/u-boot-ralink/include/rt_mmap.h include/mem_map_1fc0.h \
+  include/chip_reg_map.h include/aux_reg_map.h include/product.h \
+  include/mem_map.h include/mac.inc include/chip_reg_map.h include/cpu.h
+# 1 "/work/luo/u-boot-ralink/board/rt2880//"
+memsetup.o: memsetup.S /work/luo/u-boot-ralink/include/config.h \
+  /work/luo/u-boot-ralink/include/configs/rt2880.h \
+  /work/luo/u-boot-ralink/include/configs/../../autoconf.h \
+  /work/luo/u-boot-ralink/include/cmd_confdefs.h \
+  /work/luo/u-boot-ralink/include/version.h \
+  /work/luo/u-boot-ralink/include/../uboot_version.h \
+  /work/luo/u-boot-ralink/include/asm/regdef.h include/product.h \
+  include/mem_map.h /work/luo/u-boot-ralink/include/rt_mmap.h \
+  include/mem_map_1fc0.h include/chip_reg_map.h include/aux_reg_map.h \
+  include/mem_map.h include/mac.inc include/chip_reg_map.h
+# 1 "/work/luo/u-boot-ralink/board/rt2880//"
+rt2880.o: rt2880.c /work/luo/u-boot-ralink/include/common.h \
+  /work/luo/u-boot-ralink/include/config.h \
+  /work/luo/u-boot-ralink/include/configs/rt2880.h \
+  /work/luo/u-boot-ralink/include/configs/../../autoconf.h \
+  /work/luo/u-boot-ralink/include/cmd_confdefs.h \
+  /work/luo/u-boot-ralink/include/linux/bitops.h \
+  /work/luo/u-boot-ralink/include/asm/bitops.h \
+  /work/luo/u-boot-ralink/include/linux/types.h \
+  /work/luo/u-boot-ralink/include/linux/config.h \
+  /work/luo/u-boot-ralink/include/linux/posix_types.h \
+  /work/luo/u-boot-ralink/include/linux/stddef.h \
+  /work/luo/u-boot-ralink/include/asm/posix_types.h \
+  /work/luo/u-boot-ralink/include/asm/types.h \
+  /work/luo/u-boot-ralink/include/asm/byteorder.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/little_endian.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/swab.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/generic.h \
+  /work/luo/u-boot-ralink/include/asm/sgidefs.h \
+  /work/luo/u-boot-ralink/include/asm/system.h \
+  /work/luo/u-boot-ralink/include/asm/ptrace.h \
+  /work/luo/u-boot-ralink/include/asm/isadep.h \
+  /work/luo/u-boot-ralink/include/linux/string.h \
+  /work/luo/u-boot-ralink/include/asm/string.h \
+  /opt/buildroot-gcc342/bin/../lib/gcc/mipsel-linux-uclibc/3.4.2/include/stdarg.h \
+  /work/luo/u-boot-ralink/include/part.h \
+  /work/luo/u-boot-ralink/include/ide.h \
+  /work/luo/u-boot-ralink/include/flash.h \
+  /work/luo/u-boot-ralink/include/image.h \
+  /work/luo/u-boot-ralink/include/asm/u-boot.h \
+  /work/luo/u-boot-ralink/include/asm/global_data.h \
+  /work/luo/u-boot-ralink/include/asm/regdef.h \
+  /work/luo/u-boot-ralink/include/command.h \
+  /work/luo/u-boot-ralink/include/asm/addrspace.h
+# 1 "/work/luo/u-boot-ralink/board/rt2880//"
+serial.o: serial.c /work/luo/u-boot-ralink/include/common.h \
+  /work/luo/u-boot-ralink/include/config.h \
+  /work/luo/u-boot-ralink/include/configs/rt2880.h \
+  /work/luo/u-boot-ralink/include/configs/../../autoconf.h \
+  /work/luo/u-boot-ralink/include/cmd_confdefs.h \
+  /work/luo/u-boot-ralink/include/linux/bitops.h \
+  /work/luo/u-boot-ralink/include/asm/bitops.h \
+  /work/luo/u-boot-ralink/include/linux/types.h \
+  /work/luo/u-boot-ralink/include/linux/config.h \
+  /work/luo/u-boot-ralink/include/linux/posix_types.h \
+  /work/luo/u-boot-ralink/include/linux/stddef.h \
+  /work/luo/u-boot-ralink/include/asm/posix_types.h \
+  /work/luo/u-boot-ralink/include/asm/types.h \
+  /work/luo/u-boot-ralink/include/asm/byteorder.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/little_endian.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/swab.h \
+  /work/luo/u-boot-ralink/include/linux/byteorder/generic.h \
+  /work/luo/u-boot-ralink/include/asm/sgidefs.h \
+  /work/luo/u-boot-ralink/include/asm/system.h \
+  /work/luo/u-boot-ralink/include/asm/ptrace.h \
+  /work/luo/u-boot-ralink/include/asm/isadep.h \
+  /work/luo/u-boot-ralink/include/linux/string.h \
+  /work/luo/u-boot-ralink/include/asm/string.h \
+  /opt/buildroot-gcc342/bin/../lib/gcc/mipsel-linux-uclibc/3.4.2/include/stdarg.h \
+  /work/luo/u-boot-ralink/include/part.h \
+  /work/luo/u-boot-ralink/include/ide.h \
+  /work/luo/u-boot-ralink/include/flash.h \
+  /work/luo/u-boot-ralink/include/image.h \
+  /work/luo/u-boot-ralink/include/asm/u-boot.h \
+  /work/luo/u-boot-ralink/include/asm/global_data.h \
+  /work/luo/u-boot-ralink/include/asm/regdef.h serial.h \
+  /work/luo/u-boot-ralink/include/rt_mmap.h

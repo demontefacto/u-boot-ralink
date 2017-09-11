@@ -1,0 +1,95 @@
+Index: config.in
+===================================================================
+--- config.in	(鐗堟湰 60)
++++ config.in	(鐗堟湰 61)
+@@ -888,7 +888,12 @@
+ choice 'Flash Type' "NAND ON_BOARD_NAND_FLASH_COMPONENT \
+                      SPI ON_BOARD_SPI_FLASH_COMPONENT
+ 		    "SPI
+-
++if [ "$ON_BOARD_SPI_FLASH_COMPONENT" == "y" ]; then
++choice 'SPI Flash speed' "Fast CONFIG_SPI_FLASH_FAST \
++		     Normal CONFIG_SPI_FLASH_NORMAL \
++                     Slow CONFIG_SPI_FLASH_SLOW
++		    "Normal
++fi
+ if [ "$DUAL_IMAGE_SUPPORT" = "y" ]; then
+ choice 'Flash Size' "4M ON_BOARD_4M_FLASH_COMPONENT \
+                      8M ON_BOARD_8M_FLASH_COMPONENT \
+Index: config.mk
+===================================================================
+--- config.mk	(鐗堟湰 60)
++++ config.mk	(鐗堟湰 61)
+@@ -767,6 +767,15 @@
+ endif
+ CPPFLAGS += -DCFG_ENV_IS_$(CFG_ENV_IS)
+ 
++ifeq ($(CONFIG_SPI_FLASH_FAST),y)
++CPPFLAGS += -DCONFIG_SPI_FLASH_FAST
++endif
++ifeq ($(CONFIG_SPI_FLASH_SLOW),y)
++CPPFLAGS += -DCONFIG_SPI_FLASH_SLOW
++endif
++ifeq ($(CONFIG_SPI_FLASH_NORMAL),y)
++CPPFLAGS += -DCONFIG_SPI_FLASH_NORMAL
++endif
+ 
+ ifdef BUILD_TAG
+ CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes \
+Index: drivers/ralink_spi.h
+===================================================================
+--- drivers/ralink_spi.h	(鐗堟湰 60)
++++ drivers/ralink_spi.h	(鐗堟湰 61)
+@@ -54,6 +54,14 @@
+ #define SPICFG_SPICLK_DIV64		(5<<0)		/* system clock rat / 64  */
+ #define SPICFG_SPICLK_DIV128		(6<<0)		/* system clock rat / 128 */
+ 
++#if defined (CONFIG_SPI_FLASH_FAST)
++#define SPICFG_SPICLK_DIV 	SPICFG_SPICLK_DIV4
++#elif defined (CONFIG_SPI_FLASH_SLOW)
++#define SPICFG_SPICLK_DIV 	SPICFG_SPICLK_DIV16
++#else
++#define SPICFG_SPICLK_DIV 	SPICFG_SPICLK_DIV8
++#endif
++
+ #define SPICFG_SPICLKPOL		(1<<6)		/* spi clk*/
+ 
+ #define SPICFG_ADDRMODE			(1 << 12)
+Index: drivers/spi_flash.c
+===================================================================
+--- drivers/spi_flash.c	(鐗堟湰 60)
++++ drivers/spi_flash.c	(鐗堟湰 61)
+@@ -232,15 +232,15 @@
+ 
+ 	// FIXME, clk_div should depend on spi-flash.
+ #ifdef ADDR_4B // use 4 byte address mode
+-	ra_outl(RT2880_SPI0_CFG_REG, SPICFG_MSBFIRST | SPICFG_TXCLKEDGE_FALLING | SPICFG_SPICLK_DIV8 | SPICFG_SPICLKPOL | SPICFG_ADDRMODE);
++	ra_outl(RT2880_SPI0_CFG_REG, SPICFG_MSBFIRST | SPICFG_TXCLKEDGE_FALLING | SPICFG_SPICLK_DIV | SPICFG_SPICLKPOL | SPICFG_ADDRMODE);
+ #else
+-	ra_outl(RT2880_SPI0_CFG_REG, SPICFG_MSBFIRST | SPICFG_TXCLKEDGE_FALLING | SPICFG_SPICLK_DIV8 | SPICFG_SPICLKPOL);
++	ra_outl(RT2880_SPI0_CFG_REG, SPICFG_MSBFIRST | SPICFG_TXCLKEDGE_FALLING | SPICFG_SPICLK_DIV | SPICFG_SPICLKPOL);
+ #endif
+ 								
+ 	// set idle state
+ 	ra_outl(RT2880_SPI0_CTL_REG, SPICTL_HIZSDO | SPICTL_SPIENA_HIGH);
+ 
+-	spi_wait_nsec = (8 * 1000 / ((mips_bus_feq / 1000 / 1000 / SPICFG_SPICLK_DIV8) )) >> 1 ;
++	spi_wait_nsec = (8 * 1000 / ((mips_bus_feq / 1000 / 1000 / SPICFG_SPICLK_DIV) )) >> 1 ;
+ 
+ 	printf("spi_wait_nsec: %x \n", spi_wait_nsec);
+ 	return 0;
+Index: include/configs/rt2880.h
+===================================================================
+--- include/configs/rt2880.h	(鐗堟湰 60)
++++ include/configs/rt2880.h	(鐗堟湰 61)
+@@ -322,6 +322,10 @@
+ #define CFG_BOOTLOADER_SIZE	0x40000
+ #define CFG_CONFIG_SIZE		0x20000
+ #define CFG_FACTORY_SIZE	0x20000
++#elif defined(BR100_BOARD)  /* BR100的u-boot为128k,其他大小不变，位置偏移变换，从0x40000启动 */
++#define CFG_BOOTLOADER_SIZE	0x20000
++#define CFG_CONFIG_SIZE		0x10000
++#define CFG_FACTORY_SIZE	0x10000
+ #else                                               /* flash为64K块，每个分区是64K的倍数，从0x50000启动.*/
+ #define CFG_BOOTLOADER_SIZE	0x30000
+ #define CFG_CONFIG_SIZE		0x10000

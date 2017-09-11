@@ -1,0 +1,41 @@
+﻿
+<html>
+<!--
+
+Desgin for u-boot recovery. 2012.10
+
+lintel<lintel.huang@gmail.com>
+
+-->
+	<head>
+		<title>路由器固件恢复</title>
+		<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+		body{background-color:#EEEEEE;text-align:center;}.main{margin:0px auto;}.top{margin:0px auto;height:132px;border-bottom:1px solid #666;width:940px;text-align:center;line-height:66px;overflow:hidden;clear:both;}.top p{font-family:微软雅黑;font-size:24px;color:#92bc01;}.foot{margin:0px auto;width:652px;}.foot form{width:652px;}.foot p{margin-top:40px;font-family:微软雅黑;font-size:13px;color:#92bc01;text-align:left;padding-left:67px;}.foot .upload_input{height:30px;width:400px;font-family:微软雅黑;}.foot .submit_button{height:30px;width:90px;font-family:微软雅黑;margin-left:30px;}.foot_r{width:652px;height:170px;background-color:#e7e7e7;margin-top:98px;line-height:150px;}.foot_r .warning{margin-top:40px;font-family:微软雅黑;font-size:28px;color:#fc7727;margin-left:40px;}.foot_r .des{margin-left:12px;margin-top:35px;line-height:36px;font-family:微软雅黑;font-size:13px;color:#666666;}.footer{width:940px;border-top:1px solid #666;margin:62px auto;font-family:微软雅黑;font-size:13px;color:#666666;text-align:center;}
+		</style>
+	</head>
+	
+	<body>
+		<div id="main" class="main">
+			<div class="top">
+				<p>路由器固件恢复模式</p>
+			</div>
+			<div class="foot">
+				<form action="/upload.cgi" name="upload" method="post" enctype="multipart/form-data">
+					<p>固件恢复</p>
+					<input type="file" name="firmware" class="upload_input" /><input type="submit" class="submit_button" value="恢复" />
+				</form>
+				<div class="foot_r">
+					<span class="warning">!</span>
+					<span class="des">提示：升级固件过程中请不要断电或者进行其他操作，以免更新失败</span>
+				</div>
+			</div>
+			
+			<div class="footer">
+				<p>
+					 PandoraBox Ralink/MTK Plantfrom 
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

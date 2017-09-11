@@ -1,0 +1,915 @@
+
+/******************************************************************************
+*  Ralink U-boot GPIO funtion
+* 	lintel<lintel.huang@gmail.com>
+*   GPIO Funtions:
+*   gpio_set_dir gpio_set gpio_get 
+*      
+******************************************************************************/
+
+/*
+ *
+ * gpiolib function for Ralink SoCs
+ *
+ */
+
+
+//RALINK_PIO_BASE - 0xA0000000
+#define	RALINK_PIO_SIZE			0x100
+
+#include <common.h>
+#include <rt_mmap.h>
+#include <gpio.h>
+
+#if  defined (RT3052_ASIC_BOARD) ||  defined (RT3352_ASIC_BOARD) ||  defined (RT3350_ASIC_BOARD) 
+static struct ralink_gpio_chip rt305x_gpio_chips[] =
+{
+    {
+         .label	= "RT305X-GPIO0",
+         .base	= 0,
+        .ngpio	= 24,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x00,
+            [RALINK_GPIO_REG_EDGE]	= 0x04,
+            [RALINK_GPIO_REG_RENA]	= 0x08,
+            [RALINK_GPIO_REG_FENA]	= 0x0c,
+            [RALINK_GPIO_REG_DATA]	= 0x20,
+            [RALINK_GPIO_REG_DIR]	= 0x24,
+            [RALINK_GPIO_REG_POL]	= 0x28,
+            [RALINK_GPIO_REG_SET]	= 0x2c,
+            [RALINK_GPIO_REG_RESET]	= 0x30,
+            [RALINK_GPIO_REG_TOGGLE] = 0x34,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+    {
+
+            .label	= "RT305X-GPIO1",
+            .base	= 24,
+            .ngpio	= 16,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x38,
+            [RALINK_GPIO_REG_EDGE]	= 0x3c,
+            [RALINK_GPIO_REG_RENA]	= 0x40,
+            [RALINK_GPIO_REG_FENA]	= 0x44,
+            [RALINK_GPIO_REG_DATA]	= 0x48,
+            [RALINK_GPIO_REG_DIR]	= 0x4c,
+            [RALINK_GPIO_REG_POL]	= 0x50,
+            [RALINK_GPIO_REG_SET]	= 0x54,
+            [RALINK_GPIO_REG_RESET]	= 0x58,
+            [RALINK_GPIO_REG_TOGGLE] = 0x5c,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+    {
+         .label	= "RT305X-GPIO2",
+         .base	= 40,
+        .ngpio	= 12,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x60,
+            [RALINK_GPIO_REG_EDGE]	= 0x64,
+            [RALINK_GPIO_REG_RENA]	= 0x68,
+            [RALINK_GPIO_REG_FENA]	= 0x6c,
+            [RALINK_GPIO_REG_DATA]	= 0x70,
+            [RALINK_GPIO_REG_DIR]	= 0x74,
+            [RALINK_GPIO_REG_POL]	= 0x78,
+            [RALINK_GPIO_REG_SET]	= 0x7c,
+            [RALINK_GPIO_REG_RESET]	= 0x80,
+            [RALINK_GPIO_REG_TOGGLE] = 0x84,
+      },
+      .regs_base = RALINK_PIO_BASE,
+    }
+ };
+#elif  defined (RT5350_ASIC_BOARD) 
+static struct ralink_gpio_chip rt5350_gpio_chips[] =
+{
+    {
+            .label	= "RT5350-GPIO0",
+            .base	= 0,
+            .ngpio	= 21,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x00,
+            [RALINK_GPIO_REG_EDGE]	= 0x04,
+            [RALINK_GPIO_REG_RENA]	= 0x08,
+            [RALINK_GPIO_REG_FENA]	= 0x0c,
+            [RALINK_GPIO_REG_DATA]	= 0x20,
+            [RALINK_GPIO_REG_DIR]	= 0x24,
+            [RALINK_GPIO_REG_POL]	= 0x28,
+            [RALINK_GPIO_REG_SET]	= 0x2c,
+            [RALINK_GPIO_REG_RESET]	= 0x30,
+            [RALINK_GPIO_REG_TOGGLE] = 0x34,
+        },
+	.regs_base = RALINK_PIO_BASE,
+  },
+    {
+            .label	= "RT5350-GPIO1",
+            .base	= 21,
+            .ngpio	= 28,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x60,
+            [RALINK_GPIO_REG_EDGE]	= 0x64,
+            [RALINK_GPIO_REG_RENA]	= 0x68,
+            [RALINK_GPIO_REG_FENA]	= 0x6c,
+            [RALINK_GPIO_REG_DATA]	= 0x70,
+            [RALINK_GPIO_REG_DIR]	= 0x74,
+            [RALINK_GPIO_REG_POL]	= 0x78,
+            [RALINK_GPIO_REG_SET]	= 0x7c,
+            [RALINK_GPIO_REG_RESET]	= 0x80,
+            [RALINK_GPIO_REG_TOGGLE] = 0x84,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    }
+};
+#elif  defined (RT3883_ASIC_BOARD) 
+static struct ralink_gpio_chip rt3883_gpio_chips[] =
+{
+    {
+            .label			= "RT3883-GPIO0",
+            .base			= 0,
+            .ngpio			= 24,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x00,
+            [RALINK_GPIO_REG_EDGE]	= 0x04,
+            [RALINK_GPIO_REG_RENA]	= 0x08,
+            [RALINK_GPIO_REG_FENA]	= 0x0c,
+            [RALINK_GPIO_REG_DATA]	= 0x20,
+            [RALINK_GPIO_REG_DIR]	= 0x24,
+            [RALINK_GPIO_REG_POL]	= 0x28,
+            [RALINK_GPIO_REG_SET]	= 0x2c,
+            [RALINK_GPIO_REG_RESET]	= 0x30,
+            [RALINK_GPIO_REG_TOGGLE] = 0x34,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+    {
+            .label			= "RT3883-GPIO1",
+            .base			= 24,
+            .ngpio			= 16,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x38,
+            [RALINK_GPIO_REG_EDGE]	= 0x3c,
+            [RALINK_GPIO_REG_RENA]	= 0x40,
+            [RALINK_GPIO_REG_FENA]	= 0x44,
+            [RALINK_GPIO_REG_DATA]	= 0x48,
+            [RALINK_GPIO_REG_DIR]	= 0x4c,
+            [RALINK_GPIO_REG_POL]	= 0x50,
+            [RALINK_GPIO_REG_SET]	= 0x54,
+            [RALINK_GPIO_REG_RESET]	= 0x58,
+            [RALINK_GPIO_REG_TOGGLE] = 0x5c,
+        },
+	.regs_base = RALINK_PIO_BASE,
+     },
+     {
+            .label			= "RT3883-GPIO2",
+            .base			= 40,
+            .ngpio			= 32,
+
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x60,
+            [RALINK_GPIO_REG_EDGE]	= 0x64,
+            [RALINK_GPIO_REG_RENA]	= 0x68,
+            [RALINK_GPIO_REG_FENA]	= 0x6c,
+            [RALINK_GPIO_REG_DATA]	= 0x70,
+            [RALINK_GPIO_REG_DIR]	= 0x74,
+            [RALINK_GPIO_REG_POL]	= 0x78,
+            [RALINK_GPIO_REG_SET]	= 0x7c,
+            [RALINK_GPIO_REG_RESET]	= 0x80,
+            [RALINK_GPIO_REG_TOGGLE] = 0x84,
+        },
+	.regs_base = RALINK_PIO_BASE,
+     },
+    {
+         .label			= "RT3883-GPIO3",
+         .base			= 72,
+         .ngpio			= 24,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x88,
+            [RALINK_GPIO_REG_EDGE]	= 0x8c,
+            [RALINK_GPIO_REG_RENA]	= 0x90,
+            [RALINK_GPIO_REG_FENA]	= 0x94,
+            [RALINK_GPIO_REG_DATA]	= 0x98,
+            [RALINK_GPIO_REG_DIR]	= 0x9c,
+            [RALINK_GPIO_REG_POL]	= 0xa0,
+            [RALINK_GPIO_REG_SET]	= 0xa4,
+            [RALINK_GPIO_REG_RESET]	= 0xa8,
+            [RALINK_GPIO_REG_TOGGLE] = 0xac,
+        },
+	.regs_base = RALINK_PIO_BASE,
+     },
+};
+#elif  defined (MT7620_ASIC_BOARD) 
+static struct ralink_gpio_chip mt7620_gpio_chips[] =
+{
+    {
+            .label			= "MT7620-GPIO0",
+            .base			= 0,
+            .ngpio			= 24,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x00,
+            [RALINK_GPIO_REG_EDGE]	= 0x04,
+            [RALINK_GPIO_REG_RENA]	= 0x08,
+            [RALINK_GPIO_REG_FENA]	= 0x0c,
+            [RALINK_GPIO_REG_DATA]	= 0x20,
+            [RALINK_GPIO_REG_DIR]	= 0x24,
+            [RALINK_GPIO_REG_POL]	= 0x28,
+            [RALINK_GPIO_REG_SET]	= 0x2c,
+            [RALINK_GPIO_REG_RESET]	= 0x30,
+            [RALINK_GPIO_REG_TOGGLE] = 0x34,
+        },
+      .regs_base = RALINK_PIO_BASE,
+     },
+    {
+
+            .label			= "MT7620-GPIO1",
+            .base			= 24,
+            .ngpio			= 16,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x38,
+            [RALINK_GPIO_REG_EDGE]	= 0x3c,
+            [RALINK_GPIO_REG_RENA]	= 0x40,
+            [RALINK_GPIO_REG_FENA]	= 0x44,
+            [RALINK_GPIO_REG_DATA]	= 0x48,
+            [RALINK_GPIO_REG_DIR]	= 0x4c,
+            [RALINK_GPIO_REG_POL]	= 0x50,
+            [RALINK_GPIO_REG_SET]	= 0x54,
+            [RALINK_GPIO_REG_RESET]	= 0x58,
+            [RALINK_GPIO_REG_TOGGLE] = 0x5c,
+        },
+	.regs_base = RALINK_PIO_BASE,
+       },
+    {
+
+            .label			= "MT7620-GPIO2",
+            .base			= 40,
+            .ngpio			= 32,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x60,
+            [RALINK_GPIO_REG_EDGE]	= 0x64,
+            [RALINK_GPIO_REG_RENA]	= 0x68,
+            [RALINK_GPIO_REG_FENA]	= 0x6c,
+            [RALINK_GPIO_REG_DATA]	= 0x70,
+            [RALINK_GPIO_REG_DIR]	= 0x74,
+            [RALINK_GPIO_REG_POL]	= 0x78,
+            [RALINK_GPIO_REG_SET]	= 0x7c,
+            [RALINK_GPIO_REG_RESET]	= 0x80,
+            [RALINK_GPIO_REG_TOGGLE] = 0x84,
+        },
+	.regs_base = RALINK_PIO_BASE,
+   },
+    {
+            .label			= "MT7620-GPIO3",
+            .base			= 72,
+            .ngpio			= 24,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x88,
+            [RALINK_GPIO_REG_EDGE]	= 0x8c,
+            [RALINK_GPIO_REG_RENA]	= 0x90,
+            [RALINK_GPIO_REG_FENA]	= 0x94,
+            [RALINK_GPIO_REG_DATA]	= 0x98,
+            [RALINK_GPIO_REG_DIR]	= 0x9c,
+            [RALINK_GPIO_REG_POL]	= 0xa0,
+            [RALINK_GPIO_REG_SET]	= 0xa4,
+            [RALINK_GPIO_REG_RESET]	= 0xa8,
+            [RALINK_GPIO_REG_TOGGLE] = 0xac,
+	      },
+	 .regs_base = RALINK_PIO_BASE,
+         },
+};
+#elif defined (MT7621_ASIC_BOARD) 
+static struct ralink_gpio_chip mt7621_gpio_chips[] =
+{
+    {
+            .label			= "MT7621-GPIO0",
+            .base			= 0,
+            .ngpio			= 31,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x90,
+            [RALINK_GPIO_REG_EDGE]	= 0xA0,
+            [RALINK_GPIO_REG_RENA]	= 0x50,
+            [RALINK_GPIO_REG_FENA]	= 0x60,
+            [RALINK_GPIO_REG_DATA]	= 0x20,
+            [RALINK_GPIO_REG_DIR]	= 0x00,
+            [RALINK_GPIO_REG_POL]	= 0x10,
+            [RALINK_GPIO_REG_SET]	= 0x30,
+            [RALINK_GPIO_REG_RESET]	= 0x40,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+    {
+
+            .label			= "MT7621-GPIO1",
+            .base			= 32,
+            .ngpio			= 31,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x94,
+            [RALINK_GPIO_REG_EDGE]	= 0xA4,
+            [RALINK_GPIO_REG_RENA]	= 0x54,
+            [RALINK_GPIO_REG_FENA]	= 0x64,
+            [RALINK_GPIO_REG_DATA]	= 0x24,
+            [RALINK_GPIO_REG_DIR]	= 0x04,
+            [RALINK_GPIO_REG_POL]	= 0x14,
+            [RALINK_GPIO_REG_SET]	= 0x34,
+            [RALINK_GPIO_REG_RESET]	= 0x44,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+    {
+            .label			= "MT7621-GPIO3",
+            .base			= 64,
+            .ngpio			= 31,
+        .regs = {
+            [RALINK_GPIO_REG_INT]	= 0x98,
+            [RALINK_GPIO_REG_EDGE]	= 0xA8,
+            [RALINK_GPIO_REG_RENA]	= 0x58,
+            [RALINK_GPIO_REG_FENA]	= 0x68,
+            [RALINK_GPIO_REG_DATA]	= 0x28,
+            [RALINK_GPIO_REG_DIR]	= 0x08,
+            [RALINK_GPIO_REG_POL]	= 0x18,
+            [RALINK_GPIO_REG_SET]	= 0x38,
+            [RALINK_GPIO_REG_RESET]	= 0x48,
+        },
+	.regs_base = RALINK_PIO_BASE,
+    },
+};
+#endif
+
+struct ralink_gpio_chip *chip;
+
+static inline void ralink_gpio_wr(struct ralink_gpio_chip *rg, u8 reg, u32 val)
+{
+    //__raw_writel(val, rg->regs_base + rg->regs[reg]);
+    *(volatile u32 *)(rg->regs_base +  rg->regs[reg])= le32_to_cpu(val);
+}
+
+static inline u32 ralink_gpio_rr(struct ralink_gpio_chip *rg, u8 reg)
+{
+    //return __raw_readl(rg->regs_base + rg->regs[reg]);
+   return le32_to_cpu(*(volatile u32 *)(rg->regs_base +  rg->regs[reg]));
+}
+
+static unsigned to_ralink_gpio(unsigned offset)
+{
+    int i;
+#if  defined (MT7620_ASIC_BOARD) 
+    for(i = 0;  i  <  (ARRAY_SIZE(mt7620_gpio_chips));i++)
+    {
+      chip = &mt7620_gpio_chips[i];
+#elif  defined (MT7621_ASIC_BOARD) 
+    for(i = 0;  i  <  (ARRAY_SIZE(mt7621_gpio_chips));i++)
+    {
+      chip = &mt7621_gpio_chips[i];  
+#elif  defined (RT5350_ASIC_BOARD) 
+    for(i = 0;  i  <  (ARRAY_SIZE(rt5350_gpio_chips));i++)
+    {
+      chip = &rt5350_gpio_chips[i];  
+#elif  defined (RT3883_ASIC_BOARD) 
+    for(i = 0;  i  <  (ARRAY_SIZE(rt3883_gpio_chips));i++)
+    {
+      chip = &rt3883_gpio_chips[i];  
+#elif  defined (RT3052_ASIC_BOARD)  || defined (RT3352_ASIC_BOARD) || defined (RT3350_ASIC_BOARD)  
+    for(i = 0;  i  <  (ARRAY_SIZE(rt305x_gpio_chips));i++)
+    {
+      chip = &rt305x_gpio_chips[i];  
+#endif
+      if ( (offset >= chip->base)  && ( offset <  (chip->base + chip->ngpio) ) )
+      {
+//      printf("GPIO%d,found on %s\n", offset,chip->label);
+      offset -= chip->base;
+      return offset;	
+      }
+
+    }
+    return 0;
+}
+
+
+static int ralink_gpio_direction_input( unsigned offset)
+{
+    u32 t;
+    offset = to_ralink_gpio(offset);
+    t = ralink_gpio_rr(chip, RALINK_GPIO_REG_DIR);
+    t &= ~(1 << offset);
+    ralink_gpio_wr(chip, RALINK_GPIO_REG_DIR, t);
+
+    return 0;
+}
+
+static int ralink_gpio_direction_output(unsigned offset, int value)
+{
+    offset = to_ralink_gpio(offset);
+    u32 reg;
+    u32 t;
+
+    reg = (value) ? RALINK_GPIO_REG_SET : RALINK_GPIO_REG_RESET;
+
+    ralink_gpio_wr(chip, reg, 1 << offset);
+
+    t = ralink_gpio_rr(chip, RALINK_GPIO_REG_DIR);
+    t |= 1 << offset;
+    ralink_gpio_wr(chip, RALINK_GPIO_REG_DIR, t);
+    return 0;
+}
+
+static void ralink_gpio_set(unsigned offset, int value)
+{
+    offset = to_ralink_gpio(offset);
+    u32 reg;
+
+    reg = (value) ? RALINK_GPIO_REG_SET : RALINK_GPIO_REG_RESET;
+    ralink_gpio_wr(chip, reg, 1 << offset);
+}
+
+static int ralink_gpio_get(unsigned offset)
+{
+   offset =  to_ralink_gpio(offset);
+    u32 t;
+
+    t = ralink_gpio_rr(chip, RALINK_GPIO_REG_DATA);
+    return !!(t & (1 << offset));
+}
+
+void ralink_gpiomode_init(const struct ralink_gpio_mode *board_gpio_mode)
+{
+//	unsigned int i;
+    u32 gpiomode;
+
+    printf("GPIO_MODE init:\n");
+
+    //config these pins to gpio mode
+    gpiomode = le32_to_cpu(*(volatile u32 *)(RALINK_REG_GPIOMODE));
+    
+#if   defined (RT3052_ASIC_BOARD) || defined (RT3350_ASIC_BOARD) || defined (RT3352_ASIC_BOARD) || defined (RT5350_ASIC_BOARD) || defined (RT3883_ASIC_BOARD) 
+        gpiomode |= RALINK_GPIOMODE_DFT;
+#elif  defined (MT7620_ASIC_BOARD) 
+        gpiomode |= RALINK_GPIOMODE_DFT_MT7620;
+#elif  defined (MT7621_ASIC_BOARD) 
+        gpiomode |= RALINK_GPIOMODE_DFT_MT7621;
+#else
+        gpiomode |= RALINK_GPIOMODE_DFT;
+#endif
+	
+    if (board_gpio_mode->i2c)
+    {
+        printf("\tI2C:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_I2C;
+    }
+    else
+      gpiomode &= ~RALINK_GPIOMODE_I2C;
+
+    if (board_gpio_mode->spi)
+    {
+            printf("\tSPI:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_SPI;
+    }
+
+    if (board_gpio_mode->spi_refclk)
+    {
+        printf("\tSPI_REFCLK:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_SPI_REFCLK;
+    }
+/* 
+	RALINK_UARTF_FUNC        000B 
+	RALINK_UARTF_PCM_UARTL   001B  
+	RALINK_UARTF_PCM_I2S     010B  
+	RALINK_UARTF_UARTL_I2S   011B 
+	RALINK_UARTF_PCM_GPIO    100B
+	RALINK_UARTF_GPIO_UARTL  101B 
+	RALINK_UARTF_GPIO_I2S 	 110B 
+	RALINK_UARTF_GPIO_ALL 	 111B 
+*/
+    switch(board_gpio_mode->uartf)
+    {
+      case RALINK_UARTF_FUNC:
+	 printf("\tUART_F:Full UART\n");
+	 break;
+      case RALINK_UARTF_PCM_UARTL:
+	 printf("\tUART_F:PCM+UART Lite\n");
+	 break;
+      case RALINK_UARTF_PCM_I2S:
+	 printf("\tUART_F:PCM+I2S\n");
+	 break;
+      case RALINK_UARTF_UARTL_I2S:
+	 printf("\tUART_F:UART+I2S\n");
+	 break;
+      case RALINK_UARTF_PCM_GPIO:
+	 printf("\tUART_F:PCM+GPIO\n");
+	 break;
+      case RALINK_UARTF_GPIO_UARTL:
+	 printf("\tUART_F:GPIO+UART Lite\n");
+	 break;
+      case RALINK_UARTF_GPIO_I2S:
+	 printf("\tUART_F:GPIO+I2S\n");
+	 break;
+      case RALINK_UARTF_GPIO_ALL:
+	 printf("\tUART_F:GPIO\n");
+	 break;
+      default:
+	 printf("\tUART_F:Unknow\n");
+	 gpiomode |= (RALINK_GPIOMODE_UARTF<<RALINK_GPIOMODE_UARTF_SHIFT);
+	 break;
+    }
+    gpiomode |= (board_gpio_mode->uartf<<RALINK_GPIOMODE_UARTF_SHIFT);
+	
+    if (board_gpio_mode->uartl)
+    {
+        printf("\tUART_L:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_UARTL;
+    }
+
+    if (board_gpio_mode->jtag)
+    {
+#if  !defined (MT7620_ASIC_BOARD) 
+            printf("\tJTAG:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_JTAG;
+#endif
+    }
+
+    if (board_gpio_mode->mdio)
+    {
+#if  !defined (MT7620_ASIC_BOARD) 
+            printf("\tMDIO:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_MDIO;
+#elif defined (RT5350_ASIC_BOARD) 
+            printf("\tMDIO:NONE\n");
+#else
+            printf("\tMDIO:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_MDIO_MT7620;
+#endif
+
+    }
+
+    if (board_gpio_mode->ephy)
+    {
+#if  defined (MT7620_ASIC_BOARD)  ||   defined (RT3883_ASIC_BOARD)
+            printf("\tEPHY:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_EPHY_RT3883_MT7620;
+#else
+            printf("\tEPHY:GPIO\n");
+            gpiomode |= RALINK_GPIOMODE_EPHY;
+#endif
+
+    }
+#if defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_RT3883) || defined (CONFIG_RALINK_RT3052)
+    if (board_gpio_mode->ge1)
+    {
+        printf("\tGE1:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_GE1;
+    }
+    if (board_gpio_mode->ge2)
+    {
+        printf("\tGE2:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_GE2;
+    }
+
+#endif
+#if defined (CONFIG_RALINK_MT7620)
+    if (board_gpio_mode->nand == RALINK_NAND_FUN)
+    {
+        printf("\tNAND/SD:NFI\n");
+        gpiomode |= (RALINK_NAND_FUN<<RALINK_GPIOMODE_ND_SD_SHIFT);
+    }
+    else if (board_gpio_mode->nand == RALINK_NAND_SD_BT)
+    {
+        printf("\tNAND/SD:BT+SD\n");
+        gpiomode |= (RALINK_NAND_SD_BT<<RALINK_GPIOMODE_ND_SD_SHIFT);
+    }
+    else if (board_gpio_mode->nand == RALINK_NAND_GPIO_ALL)
+    {
+        printf("\tNAND/SD:GPIO\n");
+        gpiomode |= (RALINK_NAND_GPIO_ALL<<RALINK_GPIOMODE_ND_SD_SHIFT);
+    }
+#endif  
+#if  defined (CONFIG_RALINK_RT3883) 
+    if (board_gpio_mode->lana)
+    {
+        printf("\tLAN_A:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_LNA_A;
+    }
+    if (board_gpio_mode->lang)
+    {
+        printf("\tLAN_G:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_LNA_G;
+    }
+#endif
+    if (board_gpio_mode->wdt_rst)
+    {
+        printf("\tWDT_RST:GPIO\n");
+        gpiomode |= RALINK_GPIOMODE_WDT_MT7621;
+    }
+    
+    *(volatile u32 *)(RALINK_REG_GPIOMODE) = cpu_to_le32(gpiomode);
+    
+    printf("GPIO_MODE_REGs: 0x%x\n",le32_to_cpu(*(volatile u_long *) RALINK_REG_GPIOMODE));
+
+}
+
+#if defined(HG255D_BOARD) || defined(HG256_BOARD)
+//HG255D
+#define RESET_BTN_BIT		4
+#define WLAN_BTN_BIT		10
+#define WPS_BTN_BIT			0
+#define POWER_LED_BIT		8
+#define READY_LED_BIT			POWER_LED_BIT
+#define HG255D_GPIO_LED_WPS		12
+#define HG255D_GPIO_LED_WLAN		9
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+//rt-n13u
+#elif defined(RT_N13U_BOARD)
+#define RESET_BTN_BIT			10	
+#define WPS_BTN_BIT			0
+#define POWER_LED_BIT			7
+#define READY_LED_BIT			POWER_LED_BIT
+
+//ZBT-AP8100RT
+#elif defined(ZBT_AP8100RT_BOARD)
+//#define RESET_BTN_BIT			0
+#define RESET_BTN_BIT			14
+#define POWER_LED_BIT			7
+#define READY_LED_BIT			POWER_LED_BIT
+
+//BL-RT3052
+#elif defined(BL_RT3052_BOARD)
+#define RESET_BTN_BIT			0
+#define SYS_LED_BIT			14
+#define READY_LED_BIT			SYS_LED_BIT
+
+//ZBT AP2001
+#elif defined(AP2001_BOARD)
+#define RESET_BTN_BIT			10
+#define SYS_LED_BIT			13
+#define READY_LED_BIT			SYS_LED_BIT
+
+
+//ZBT-WR83052RT
+#elif defined(ZBT_WR83052RT_BOARD)
+<<<<<<< .mine
+#define RESET_BTN_BIT			GPIO_0  //qianmian_AP
+//#define RESET_BTN_BIT			GPIO_10
+#define SEC_LED_BIT			GPIO_14
+=======
+//#define RESET_BTN_BIT			0
+#define RESET_BTN_BIT			10
+#define SEC_LED_BIT			14
+>>>>>>> .r93
+#define READY_LED_BIT			SEC_LED_BIT
+
+//WCR-HP-GN-CH
+#elif defined(WCR_GN_BOARD) 
+#define RESET_BTN_BIT			10	
+#define WPS_BTN_BIT			0
+#define DIAG_LED_BIT			7
+#define READY_LED_BIT			DIAG_LED_BIT
+
+//FON2405E
+#elif defined(FON2405E_BOARD) 
+#define RESET_BTN_BIT			10	
+#define LAN_LED_BIT			11
+#define WPS_LED_BIT			14
+#define READY_LED_BIT			LAN_LED_BIT
+
+//WAP120NF
+#elif defined(WAP120NF_BOARD)
+#define RESET_BTN_BIT			10	
+#define WLAN_BTN_BIT			13
+#define WPS_BTN_BIT			0
+#define POWER_LED_BIT			9
+#define READY_LED_BIT			POWER_LED_BIT
+
+//FWR-601
+#elif defined(FWR601_BOARD)
+#define RESET_BTN_BIT			10	
+#define POWER_LED_BIT			14
+#define READY_LED_BIT			POWER_LED_BIT
+
+//ZBT_WR8305RT_BOARD
+#elif defined(ZBT_WR8305RT_BOARD)
+#define RESET_BTN_BIT			1
+#define SYS_LED_BIT			0
+#define READY_LED_BIT			SYS_LED_BIT
+#elif defined(RY1_BOARD) || defined(WR856N_BOARD)
+#define RESET_BTN_BIT			1
+#define SYS_LED_BIT			0
+#define READY_LED_BIT			SYS_LED_BIT
+//AP8101RT
+#elif defined(ZBT_AP8101RT_BOARD)
+#define RESET_BTN_BIT			10
+#define WPS_BTN_BIT			0  /* AP8101-RT-B use GPIO0 for ResetBTN*/
+#define SYS_LED_BIT			14
+#define READY_LED_BIT			SYS_LED_BIT
+//AP8102RT
+#elif defined(ZBT_AP8102RT_BOARD)
+#define RESET_BTN_BIT			0
+#define SYS_LED_BIT			1
+#define READY_LED_BIT			SYS_LED_BIT
+//MW305R
+#elif defined(MW305R_BOARD)
+#define RESET_BTN_BIT			1
+#define SYS_LED_BIT			2
+#define READY_LED_BIT			SYS_LED_BIT
+//DIR_620
+#elif defined(DIR_620_BOARD)
+#define RESET_BTN_BIT			1
+#define WPS_BTN_BIT			2 
+#define SYS_LED_BIT			0
+#define READY_LED_BIT			SYS_LED_BIT
+//PBX220_BOARD PBX230_BOARD
+#elif defined(PBX220_BOARD) || defined(PBX230_BOARD)
+#define RESET_BTN_BIT			1
+#define WPS_BTN_BIT			2 
+#define SYS_LED_BIT			0
+#define READY_LED_BIT			SYS_LED_BIT
+//MT7620A EVB
+#elif defined(MT7620A_EVB_BOARD)
+<<<<<<< .mine
+//#define RESET_BTN_BIT			GPIO_1
+#define RESET_BTN_BIT			GPIO_13
+#define WPS_BTN_BIT			GPIO_2 
+#define SYS_LED_BIT			GPIO_9
+=======
+#define RESET_BTN_BIT			1
+#define WPS_BTN_BIT			2 
+#define SYS_LED_BIT			9
+>>>>>>> .r93
+#define READY_LED_BIT			SYS_LED_BIT
+//MT7620A EVB
+#elif defined(MT7621A_EVB_BOARD)
+#define RESET_BTN_BIT			18
+#define SYS_LED_BIT			9
+#define READY_LED_BIT			SYS_LED_BIT
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 0,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_SD_BT,
+	.uartl	= 0,
+	.jtag	= 0,
+	.mdio	= 0,
+	.wdt_rst	= 1,
+	.spi_refclk = 0,
+};
+//RY2
+#elif defined(RY2_BOARD)
+#define RESET_BTN_BIT			11
+#define SYS_LED_BIT				14
+#define READY_LED_BIT			SYS_LED_BIT
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+#elif defined(AC1200_BOARD)
+#define RESET_BTN_BIT			11
+#define SYS_LED_BIT			9
+#define READY_LED_BIT			SYS_LED_BIT
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+#elif defined(BR100_BOARD)
+#define WPS_BTN_BIT			14
+#define RESET_BTN_BIT			13
+#define SYS_LED_BIT			9
+#define READY_LED_BIT			SYS_LED_BIT
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+
+//M100
+#elif defined(M100_BOARD)
+#define RESET_BTN_BIT			13
+#define SYS_LED_BIT			9
+#define READY_LED_BIT			SYS_LED_BIT
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+//AP7620A_BOARD
+#elif defined(AP7620A_BOARD)
+#define RESET_BTN_BIT			1
+#define SYS_LED_BIT			12
+#define READY_LED_BIT			SYS_LED_BIT
+<<<<<<< .mine
+//AP7621A_EVB_BOARD
+#elif defined(MT7621A_EVB_BOARD)
+#define RESET_BTN_BIT           GPIO_1
+#define SYS_LED_BIT         GPIO_12
+#define READY_LED_BIT           SYS_LED_BIT
+=======
+static struct ralink_gpio_mode board_gpio_mode = {
+	.i2c	= 1,
+	.spi	= 1,
+	.uartf	= RALINK_UARTF_GPIO_ALL,
+	.nand	= RALINK_NAND_GPIO_ALL,
+	.uartl	= 0,
+	.jtag	= 1,
+	.mdio	= 0,
+	.spi_refclk = 1,
+};
+>>>>>>> .r93
+#else
+//WCR-HP-GN-CH
+#define RESET_BTN_BIT			10	
+#define WPS_BTN_BIT			0
+#define POWER_LED_BIT			13
+#define READY_LED_BIT			POWER_LED_BIT
+#endif
+
+#define SYSCFG_OFFSET		0x10
+#define UARTF_PCM_MODE_SHIFT	6
+
+
+void gpio_init(void)
+{
+  //SET GPIO
+  ralink_gpiomode_init(&board_gpio_mode);
+    
+  ralink_gpio_direction_output(READY_LED_BIT,0);
+  
+}
+
+void led_control(int state)
+{
+   ralink_gpio_set(READY_LED_BIT,state);
+}
+
+unsigned long detect_button(void)
+{
+	if( !ralink_gpio_get(RESET_BTN_BIT) )
+	{/*reset button pressed*/
+		printf("\nReset button pressed!\n");
+		return 1;	// disable for tmp
+		
+	}
+#if defined(WLAN_BTN_BIT)
+	else if(! ralink_gpio_get(WLAN_BTN_BIT))
+	{/*WLAN button pressed*/
+			printf("\nWLAN button pressed!\n");
+			return 2;
+	}
+#endif
+#if defined(WPS_BTN_BIT)
+	else if(!(ralink_gpio_get(WPS_BTN_BIT))
+	{/*WPS button pressed*/
+			printf("\nWPS button pressed!\n");
+			return 3;
+	}
+#endif
+	else 
+	{
+		return 0;
+	}
+}
+
+int gpio_get(unsigned int pin)
+{
+  return  ralink_gpio_get(pin);
+
+}
+
+void set_gpio_input(unsigned int pin)
+{
+
+  ralink_gpio_direction_input(pin);
+}
+
+void set_gpio_output(unsigned int pin)
+{
+   ralink_gpio_direction_output(pin,0);
+}
+void gpio_set(unsigned int pin,unsigned int value)
+{
+  ralink_gpio_set(pin,value);
+}

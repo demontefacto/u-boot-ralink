@@ -1,0 +1,122 @@
+Index: drivers/rt2880_eth.c
+===================================================================
+--- drivers/rt2880_eth.c	(版本 85)
++++ drivers/rt2880_eth.c	(工作副本)
+@@ -1607,10 +1607,11 @@
+ 	/* In order to use 10M/Full on FPGA board. We configure phy capable to 
+ 	 * 10M Full/Half duplex, so we can use auto-negotiation on PC side */
+ #if defined (MT7620_FPGA_BOARD)
+-	for(i=0;i<4;i++){
++	for(i=0;i<4;i++)
+ #else
+-	for(i=0;i<5;i++){
++	for(i=0;i<5;i++)
+ #endif
++	{
+ 	    mii_mgr_write(i, 4, 0x0461);   //Capable of 10M Full/Half Duplex, flow control on/off
+ 	    mii_mgr_write(i, 0, 0xB100);   //reset all digital logic, except phy_reg
+ 	}
+Index: common/gpio.c
+===================================================================
+--- common/gpio.c	(版本 85)
++++ common/gpio.c	(工作副本)
+@@ -37,7 +37,8 @@
+ 
+ //BL-RT3052
+ #elif defined(BL_RT3052_BOARD)
+-#define RESET_BTN_BIT			GPIO_0
++//#define RESET_BTN_BIT			GPIO_0
++#define RESET_BTN_BIT			GPIO_10   // blude_led__64MB
+ #define SYS_LED_BIT			GPIO_14
+ #define READY_LED_BIT			SYS_LED_BIT
+ 
+@@ -94,9 +95,10 @@
+ #define READY_LED_BIT			SYS_LED_BIT
+ //AP8101RT
+ #elif defined(ZBT_AP8101RT_BOARD)
+-#define RESET_BTN_BIT			GPIO_10
+-#define WPS_BTN_BIT			GPIO_0  /* AP8101-RT-B use GPIO0 for ResetBTN*/
+-#define SYS_LED_BIT			GPIO_14
++//#define RESET_BTN_BIT			GPIO_10
++//#define WPS_BTN_BIT			GPIO_0  /* AP8101-RT-B use GPIO0 for ResetBTN*/
++#define RESET_BTN_BIT			GPIO_0
++#define SYS_LED_BIT			GPIO_14  //luo xi dan RJ45
+ #define READY_LED_BIT			SYS_LED_BIT
+ //AP8102RT
+ #elif defined(ZBT_AP8102RT_BOARD)
+@@ -122,7 +124,8 @@
+ #define READY_LED_BIT			SYS_LED_BIT
+ //MT7620A EVB
+ #elif defined(MT7620A_EVB_BOARD)
+-#define RESET_BTN_BIT			GPIO_1
++//#define RESET_BTN_BIT			GPIO_1
++#define RESET_BTN_BIT			GPIO_13
+ #define WPS_BTN_BIT			GPIO_2 
+ #define SYS_LED_BIT			GPIO_9
+ #define READY_LED_BIT			SYS_LED_BIT
+@@ -134,7 +137,7 @@
+ //BR100
+ #elif defined(BR100_BOARD)
+ #define WPS_BTN_BIT			GPIO_14
+-#define RESET_BTN_BIT			GPIO_13
++#define RESET_BTN_BIT			GPIO_12
+ #define SYS_LED_BIT			GPIO_9
+ #define READY_LED_BIT			SYS_LED_BIT
+ //M100
+@@ -144,8 +147,8 @@
+ #define READY_LED_BIT			SYS_LED_BIT
+ //AP7620A_BOARD
+ #elif defined(AP7620A_BOARD)
+-#define RESET_BTN_BIT			GPIO_1
+-#define SYS_LED_BIT			GPIO_12
++#define RESET_BTN_BIT			GPIO_2
++#define SYS_LED_BIT			GPIO_9
+ #define READY_LED_BIT			SYS_LED_BIT
+ #else
+ //WCR-HP-GN-CH
+@@ -332,7 +335,32 @@
+ #if defined(MT7620A_EVB_BOARD) || defined(RY2_BOARD)
+ 	led_control(0);
+ #endif
++
++
++// add luo for 7620A
++//#if defined(MT7620A_EVB_BOARD)
++#if 0
++	gpiomode = le32_to_cpu(*(volatile u32 *)(REG_GPIOMODE));
++    gpiomode |= (1 << 10);
++    gpiomode |= (1 << 0);
++    *(volatile u32 *)(REG_GPIOMODE) = cpu_to_le32(gpiomode);	
++
++	gpiomode = le32_to_cpu(*(volatile u32 *)(PRGIO_ADDR + 0x74));
++    gpiomode |=  (1 << 25);
++    *(volatile u32 *)(PRGIO_ADDR + 0x74) = cpu_to_le32(gpiomode);	
++
++	gpiomode = le32_to_cpu(*(volatile u32 *)(PRGIO_ADDR + 0x70));
++    gpiomode &= ~(1 << 25); 
++    *(volatile u32 *)(PRGIO_ADDR + 0x70) = cpu_to_le32(gpiomode);	
++	
++	udelay(1000000);
+ 	
++	gpiomode = le32_to_cpu(*(volatile u32 *)(PRGIO_ADDR + 0x70));
++    gpiomode |= (1 << 25);  
++    *(volatile u32 *)(PRGIO_ADDR + 0x70) = cpu_to_le32(gpiomode);	
++#endif
++
++
+ #if defined(PBX230_BOARD) || defined(M100_BOARD)
+ 	printf("\tGE1_GPIO_MODE:GPIO\n");
+         gpiomode = le32_to_cpu(*(volatile u32 *)(REG_GPIOMODE));
+@@ -370,6 +398,12 @@
+ #endif
+         set_gpio_dir(1,READY_LED_BIT);
+ 
++
++#if defined(ZBT_AP8101RT_BOARD)
++	set_gpio_dir(1, SYS_LED_BIT);
++	set_gpio_dirout(SYS_LED_BIT ,0);
++#endif
++
+ 	printf("GPIO_MODE_REG:0x%x\n",le32_to_cpu(*(volatile u_long *)REG_GPIOMODE));
+ 	printf("ReadyLED Bit:0x%x\n",READY_LED_BIT);
+ 	

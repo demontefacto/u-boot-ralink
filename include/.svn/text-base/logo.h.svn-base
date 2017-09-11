@@ -1,0 +1,254 @@
+void show_logo(void);
+void show_httpd_logo(void);
+void show_tftpd_logo(void);
+/*
+  ______        ___    ____   ___  _ _
+ / ___\ \      / / \  |___ \ / _ \/ / |  ___ ___  _ __ ___
+| |  _ \ \ /\ / / _ \   __) | | | | | | / __/ _ \| '_ ` _ \
+| |_| | \ V  V / ___ \ / __/| |_| | | || (_| (_) | | | | | |
+ \____|  \_/\_/_/   \_\_____|\___/|_|_(_)___\___/|_| |_| |_|
+
+*/
+
+#if defined(GWA_BOARD)
+void show_logo(void)
+{
+    printf("__________________________________________________________________\n");
+    printf("|    ______        ___    ____   ___  _ _                        |\n");
+    printf("|   / ___\\ \\      / / \\  |___ \\ / _ \\/ / |  ___ ___  _ __ ___    |\n");
+    printf("|  | |  _ \\ \\ /\\ / / _ \\   __) | | | | | | / __/ _ \\| '_ ` _ \\   |\n");
+    printf("|  | |_| | \\ V  V / ___ \\ / __/| |_| | | || (_| (_) | | | | | |  |\n");
+    printf("|   \\____|  \\_/\\_/_/   \\_\\_____|\\___/|_|_(_)___\\___/|_| |_| |_|  |\n");
+    printf("|                                                                |\n");
+    printf("|                  Global Wireless Alliance                      |\n");
+    printf("|                   http://www.gwa2011.com                       |\n");
+    printf("|                  E-Mail:2579131212@qq.com                      |\n");
+    printf("|                     Dreambox Team 2012                         |\n");
+    printf("|________________________________________________________________|\n\n");
+
+}
+//                                                         _____                     __     ______     __
+//                                                        / ___/____  ___  ___  ____/ /_  _/_  __/__  / /
+//                                                        \__ \/ __ \/ _ \/ _ \/ __  / / / // / / _ \/ /
+//                                                       ___/ / /_/ /  __/  __/ /_/ / /_/ // / /  __/ /
+//                                                      /____/ .___/\___/\___/\__,_/\__, //_/  \___/_/
+//                                                          /_/                    /____/
+#elif defined(SPEEDYTEL_BOARD)
+void show_logo(void)
+{
+    printf("_______________________________________________________\n");
+    printf("|                                                     |\n");
+    printf("|     _____                     __     ______     __  |\n");
+    printf("|    / ___/____  ___  ___  ____/ /_  _/_  __/__  / /  |\n");
+    printf("|    \\__ \\/ __ \\/ _ \\/ _ \\/ __  / / / // / / _ \\/ /   |\n");
+    printf("|   ___/ / /_/ /  __/  __/ /_/ / /_/ // / /  __/ /    |\n");
+    printf("|  /____/ .___/\\___/\\___/\\__,_/\\__, //_/  \\___/_/     |\n");
+    printf("|      /_/                    /____/                  |\n");
+    printf("|                SpeedyTel Technology                 |\n");
+    printf("|             http://www.speedytel.com/               |\n");
+#if   defined(PBX220_BOARD)
+    printf("|                Board:PBX220 series                  |\n");
+#elif defined(PBX230_BOARD)
+    printf("|                Board:PBX230 series                  |\n");
+#else
+    printf("|                Board:PBX series                     |\n");
+#endif
+    printf("|_____________________________________________________|\n");
+
+}
+
+/*
+
+       ____      _____                    
+      |  _ \    |_   _|__  __ _ _ __ ___  
+      | | | |_____| |/ _ \/ _` | '_ ` _ \ 
+      | |_| |_____| |  __/ (_| | | | | | |
+      |____/      |_|\___|\__,_|_| |_| |_|
+                                   
+*/
+
+#elif defined(DTEAM_BOARD)
+void show_logo(void)
+{
+    printf(" _____________________________________________________\n");
+    printf("|          ____      _____                           |\n");
+    printf("|         |  _ \\    |_   _|__  __ _ _ __ ___         |\n");
+    printf("|         | | | |_____| |/ _ \\/ _` | '_ ` _ \\        |\n");
+    printf("|         | |_| |_____| |  __/ (_| | | | | | |       |\n");
+    printf("|         |____/      |_|\\___|\\__,_|_| |_| |_|       |\n");
+    printf("|                  D-Team Technology                 |\n");
+    printf("|                http://www.xcloud.cc                |\n");
+#if defined(RY1_BOARD)
+    printf("|                    Board:RY-1                      |\n");
+#elif defined(RY2_BOARD)
+    printf("|                    Board:RY-2                      |\n");
+#else
+    printf("|                    Board:Unknow                    |\n");   
+#endif
+    printf("|____________________________________________________|\n");
+
+}
+/*
+       ____          ___        __              
+      |  _ \ ___  __| \ \      / /_ ___   _____ 
+      | |_) / _ \/ _` |\ \ /\ / / _` \ \ / / _ \
+      |  _ <  __/ (_| | \ V  V / (_| |\ V /  __/
+      |_| \_\___|\__,_|  \_/\_/ \__,_| \_/ \___|
+
+*/
+
+#elif defined(REDWAVE_BOARD)
+void show_logo(void)
+{
+  printf(" _____________________________________________________  \n");
+  printf("|       ____          ___        __                  |  \n");
+  printf("|      |  _ \\ ___  __| \\ \\      / /_ ___   _____     |  \n");
+  printf("|      | |_) / _ \\/ _` |\\ \\ /\\ / / _` \\ \\ / / _ \\    |  \n");
+  printf("|      |  _ <  __/ (_| | \\ V  V / (_| |\\ V /  __/    | \n");
+  printf("|      |_| \\_\\___|\\__,_|  \\_/\\_/ \\__,_| \\_/ \\___|    | \n");
+  printf("|                  RedWave Technology                | \n");
+  printf("|                http://www.redwave.cc/              | \n");
+  printf("|                    Board:AP7620A                   | \n");
+  printf("|____________________________________________________|  \n");
+
+}
+
+
+#else
+void show_logo(void)
+{
+    printf(" _______________________________________________________________ \n");
+    printf("|    ____                 _                 ____               |\n");
+    printf("|   |  _ \\ __ _ _ __   __| | ___  _ __ __ _| __ )  _____  __   |\n");
+    printf("|   | |_) / _` | '_ \\ / _` |/ _ \\| '__/ _` |  _ \\ / _ \\ \\/ /   |\n");
+    printf("|   |  __/ (_| | | | | (_| | (_) | | | (_| | |_) | (_) >  <    |\n");
+    printf("|   |_|   \\__,_|_| |_|\\__,_|\\___/|_|  \\__,_|____/ \\___/_/\\_\\   |\n");
+    printf("|                                                              |\n");
+    printf("|                  Ralink/MTK SDK Plantform                    |\n");
+    printf("|                    Copyright 2005-2013                       |\n");
+#if defined(HG255D_BOARD)
+    printf("|                    Board:HuaWei HG255D                       |\n");
+#elif defined(HG256_BOARD)
+printf("|                    Board:HuaWei HG256                        |\n");
+#elif defined(WCR_GN_BOARD)
+printf("|                    Board:WCR-HP-GN-CH                        |\n");
+printf("|                  http://www.anywlan.com                      |\n");
+#elif defined(RT_N13U_BOARD)
+printf("|                    Board:ASUS RT-N13U                        |\n");
+#elif defined(WAP120NF_BOARD)
+printf("|                    Board:Zyxel WAP120NF                      |\n");
+#elif defined(ZBT_AP8100RT_BOARD)
+printf("|                    Board:ZBT AP8100RT                        |\n");
+#elif defined(ZBT_AP8101RT_BOARD)
+printf("|                    Board:ZBT AP8101RT                        |\n");
+#elif defined(ZBT_AP8102RT_BOARD)
+printf("|                    Board:ZBT AP8102RT                        |\n");
+#elif defined(ZBT_WR83052RT_BOARD)
+printf("|                    Board:ZBT WR83052RT                       |\n");
+#elif defined(ZBT_WR8305RT_BOARD)
+printf("|                    Board:ZBT WR8305RT                        |\n");
+#elif defined(BL_RT3052_BOARD)
+printf("|                    Board:B-Link RT3052                       |\n");
+#elif defined(AP2001_BOARD)
+printf("|                    Board:ZBT AP2001                          |\n");
+#elif defined(FWR601_BOARD)
+printf("|                    Board:FeiXun FWR-601                      |\n");
+#elif defined(FON2405E_BOARD)
+printf("|                    Board:FON2405E                            |\n");
+#elif defined(DIR_620_BOARD)
+printf("|                    Board:D-Link DIR-620                      |\n");
+#elif defined(AP7620A_BOARD)
+printf("|                    Board:Redwave AP7620A                     |\n");
+#elif defined(MW305R_BOARD)
+printf("|                    Board:Mercury MW305R                      |\n");
+#elif defined(PRY1_BOARD) || defined(WR856N_BOARD)
+printf("|                    Board:MTN MT-WR856N-C                     |\n");
+#elif defined(MT7620A_EVB_BOARD)
+printf("|                    Board:MTK MT7620A EVB                     |\n");
+#elif defined(BR100_BOARD)
+printf("|                    Board:Baidu BR100                         |\n");
+#elif defined(M100_BOARD)
+printf("|                    Board:Baidu Music M100                    |\n");
+#else
+printf("|                    Board:Ralink RT305x                       |\n");
+#endif
+    printf("|                                                              |\n");
+    printf("|                 lintel<lintel.huang@gmail.com>               |\n");
+    printf("|______________________________________________________________|\n\n");
+
+}
+#endif
+
+void show_tftp_logo(void)
+{
+#if 0
+    printf("______________________________________________________\n");
+    printf("|   ____                           ____              |\n");
+    printf("|  |  _ \\ _ __ ___  __ _ _ __ ___ | __ )  _____  __  |\n");
+    printf("|  | | | | '__/ _ \\/ _` | '_ ` _ \\|  _ \\ / _ \\ \\/ /  |\n");
+    printf("|  | |_| | | |  __/ (_| | | | | | | |_) | (_) >  <   |\n");
+    printf("|  |____/|_|  \\___|\\__,_|_| |_| |_|____/ \\___/_/\\_\\  |\n");
+#endif
+    printf("______________________________________________________\n");
+    printf("|                                                    |\n");
+    printf("|             TFTP Recovery Module v1.1              |\n");
+    printf("|                                                    |\n");
+    printf("| Note:Please Use TFTP Client Upgrade the Firmware ! |\n");
+    printf("|                                                    |\n");
+    printf("|          lintel<lintel.huang@gmail.com>            |\n");
+    printf("|              Copyright 2005-2012                   |\n");
+    printf("|____________________________________________________|\n\n");
+    printf("\n");
+}
+
+#if defined(SPEEDYTEL_BOARD)
+void show_httpd_logo(void)
+{
+    printf("______________________________________________________\n");
+    printf("|                                                    |\n");
+    printf("|             HTTPD Recovery Module v1.1             |\n");
+    printf("|                                                    |\n");
+    printf("| Note:Please Use Web Browser Upgrade the Firmware ! |\n");
+    printf("|                                                    |\n");
+    printf("|            Copyright SpeedyTel 2012-2013           |\n");
+    printf("|____________________________________________________|\n\n");
+}
+#elif defined(DTEAM_BOARD)
+void show_httpd_logo(void)
+{
+    printf("______________________________________________________\n");
+    printf("|                                                    |\n");
+    printf("|             HTTPD Recovery Module v1.1             |\n");
+    printf("|                                                    |\n");
+    printf("| Note:Please Use Web Browser Upgrade the Firmware ! |\n");
+    printf("|                                                    |\n");
+    printf("|             Copyright D-Team 2012-2013             |\n");
+    printf("|____________________________________________________|\n\n");
+}
+#elif defined(REDWAVE_BOARD)
+void show_httpd_logo(void)
+{
+    printf("______________________________________________________\n");
+    printf("|                                                    |\n");
+    printf("|             HTTPD Recovery Module v1.1             |\n");
+    printf("|                                                    |\n");
+    printf("| Note:Please Use Web Browser Upgrade the Firmware ! |\n");
+    printf("|                                                    |\n");
+    printf("|      2007-2013 REDWAVE Inc. All rights reserved    |\n");
+    printf("|____________________________________________________|\n\n");
+}
+#else
+void show_httpd_logo(void)
+{
+    printf("______________________________________________________\n");
+    printf("|                                                    |\n");
+    printf("|             HTTPD Recovery Module v1.0             |\n");
+    printf("|                                                    |\n");
+    printf("| Note:Please Use Web Browser Upgrade the Firmware ! |\n");
+    printf("|                                                    |\n");
+    printf("|          lintel<lintel.huang@gmail.com>            |\n");
+    printf("|              Copyright 2005-2013                   |\n");
+    printf("|____________________________________________________|\n\n");
+
+}
+#endif
